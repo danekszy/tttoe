@@ -3,10 +3,10 @@ import React from 'react';
 import Checkboard from './Checkboard';
 import ResultDialog from './ResultDialog';
 
-const Main = () => (
+const Main = (props) => (
 	<div className="game-ui">
-		<ResultDialog/>
-		<Checkboard/>
+		<ResultDialog status={status}/>
+		<Checkboard {...props}/>
 	</div>
 )
 
