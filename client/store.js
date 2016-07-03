@@ -8,9 +8,9 @@ const defaultState = {
 		x: 'COMPUTER',
 	},
 	status: {
-		state: 'running', //'won'/'tied',
+		gameState: 'running', //'won'/'tied',
 		winner: undefined, //o/x,
-		currentPlayer: undefined
+		currentPlayer: 'o'
 	},
 	checkboard: [
 		'',
