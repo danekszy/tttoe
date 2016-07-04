@@ -12,7 +12,7 @@ export function reset() {
 	}
 };
 
-export function finishMove() {
+export function finishMove(shouldSwitch = true) {
 const {
 	isGameOver,
 	isFieldFilled,
@@ -35,11 +35,19 @@ const {
 		else if(isGameOver(checkboard, isFieldFilled))
 			return dispatch(updateGameState('tied'));
 
-		const newPlayer = flipPlayer(status.currentPlayer);
+		const newPlayer =
+			shouldSwitch ?
+			flipPlayer(status.currentPlayer) :
+			status.currentPlayer;
 		dispatch(switchPlayer(newPlayer));
 
-		if(shouldComputerPlay(newPlayer, players))
-			playComputer(dispatch, getState);
+		if(shouldComputerPlay(newPlayer, players)) {
+			let field = playComputer(dispatch, getState);
+			const conquerAction = (dispatch) => {
+				dispatch(conquer(field, newPlayer, true))
+			};
+			setTimeout(conquerAction.bind(null, dispatch), 500);
+		}
 	}
 };
 
@@ -50,13 +58,18 @@ function switchPlayer(newPlayer) {
 	}
 };
 
-export function conquer(index, player) {
+export function conquer(index, player, isComputer = false) {
   return (dispatch, getState) => {
+  	const playerType = getState().players[player];
   	const prevValue = getState().checkboard[index];
 
-		if(helpers.isFieldFilled(prevValue))
+  	if(!isComputer && playerType !== 'USER')
+  		return dispatch(conquerImpossible());
+
+		if(helpers.isFieldFilled(prevValue) || typeof index == 'undefined') {
 			dispatch(conquerImpossible());
-  	else {
+			dispatch(finishMove(false));
+		} else {
   		dispatch(conquerPossible(index, player));
 	  	dispatch(finishMove());
 	  }
