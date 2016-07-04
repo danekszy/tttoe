@@ -1,4 +1,16 @@
-function checkboard(state = [], action) {
+const defaultState = [
+	'',
+	'',
+	'',
+	'',
+	'',
+	'',
+	'',
+	'',
+	''
+]
+
+function checkboard(state = defaultState, action) {
 	console.log(action);
 	switch(action.type) {
 		case 'CONQUER_FIELD_POSSIBLE':
@@ -12,7 +24,7 @@ function checkboard(state = [], action) {
 
 		case 'INIT_GAME':
 		case 'RESET_GAME':
-			return state;
+			return defaultState;
 			break;
 
 		default:

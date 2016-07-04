@@ -1,4 +1,10 @@
-function status(state = [], action) {
+const defaultState = {
+	gameState: 'running', //'won'/'tied',
+	winner: undefined, //o/x,
+	currentPlayer: 'o'
+};
+
+function status(state = defaultState, action) {
 	switch(action.type) {
 		case 'SWITCH_PLAYER':
 			return {
@@ -9,7 +15,7 @@ function status(state = [], action) {
 
 		case 'INIT_GAME':
 		case 'RESET_GAME':
-			return undefined;
+			return defaultState;
 			break;
 
 		case 'UPDATE_GAMESTATE':
@@ -22,7 +28,7 @@ function status(state = [], action) {
 		case 'UPDATE_WINNER':
 			return {
 				...state,
-				winner: action.winner
+				winner: action.player
 			};
 			break;
 
