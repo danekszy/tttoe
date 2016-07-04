@@ -1,6 +1,7 @@
 function checkboard(state = [], action) {
+	console.log(action);
 	switch(action.type) {
-		case 'CONQUER_FIELD':
+		case 'CONQUER_FIELD_POSSIBLE':
 			const i = action.index;
 			return [
 				...state.slice(0, i),

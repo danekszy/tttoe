@@ -23,6 +23,7 @@ class Checkboard extends React.Component {
 	constructor() {
 		super();
 	}
+
 	listToGrid(items) {
 		return items.reduce((acc, value, i) => {
 			if(i%3 === 0) acc.push([value]);
@@ -32,7 +33,8 @@ class Checkboard extends React.Component {
 	}
 
 	onItemClick(index) {
-		this.props.conquer(index, this.props.status.currentPlayer);
+		const { status, conquer } = this.props;
+		conquer(index, status.currentPlayer);
 	}
 
 	render() {

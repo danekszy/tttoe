@@ -1,6 +1,9 @@
-import { createStore, compose } from 'redux';
+import { createStore, compose, applyMiddleware } from 'redux';
+import thunk from 'redux-thunk';
 
 import rootReducer from './reducers/index';
+
+const middewares = [ thunk ];
 
 const defaultState = {
 	players: {
@@ -25,6 +28,10 @@ const defaultState = {
 	]
 }
 
-const store = createStore(rootReducer, defaultState);
+const store = createStore(
+	rootReducer,
+	defaultState,
+	applyMiddleware(...middewares)
+);
 
 export default store;
