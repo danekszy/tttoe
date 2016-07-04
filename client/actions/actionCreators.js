@@ -15,21 +15,76 @@ const helpers = {
 		return checkboard.every(isFieldFilled);
 	},
 
+	checkHorizontalResult(checkboard) {
+		for (let i = 0; i < 3; i++) {
+			let row = checkboard.slice(i * 3, i * 3 + 3);
+			if(
+				row[0] === row[1] &&
+				row[0] === row[2] &&
+				row[0] !== ''
+			)
+				return true;
+		}
+		return false;
+	},
+
+	checkVerticalResult(checkboard) {
+		for (let i = 0; i < 3; i++) {
+			let result;
+
+			if(
+				checkboard[i] === checkboard[i+3] &&
+				checkboard[i] === checkboard[i+6]
+			)
+				result = true;
+
+			if(checkboard[i] == '')
+				result = false;
+
+			if(result)
+				return result;
+		}
+		return false;
+	},
+
+	checkDiagonalResult(checkboard) {
+		if(checkboard[4] == '') return false;
+
+		if((
+				checkboard[0] === checkboard[4] &&
+				checkboard[0] === checkboard[8]
+			) || (
+				checkboard[2] === checkboard[4] &&
+				checkboard[2] === checkboard[6]
+			)
+		)
+			return true;
+
+		return false;
+	},
+
+	checkResult(checkboard, helpers) {
+		return helpers.checkHorizontalResult(checkboard) ||
+		helpers.checkVerticalResult(checkboard) ||
+		helpers.checkDiagonalResult(checkboard);
+	},
+
 	finishMove(helpers) {
 		const {
 			isGameOver,
 			isFieldFilled,
 			flipPlayer,
 			shouldComputerPlay,
-			playComputer
+			playComputer,
+			checkResult
 		} = helpers;
 
 		return (dispatch, getState) => {
 			const state = getState();
 			const { players, checkboard, status } = state;
 
-			if(isGameOver(checkboard, isFieldFilled))
-				return console.log('game over');
+			if(checkResult(checkboard, helpers)) alert('win');
+			else if(isGameOver(checkboard, isFieldFilled)) alert('tie');
 
 			const newPlayer = flipPlayer(status.currentPlayer);
 
