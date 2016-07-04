@@ -1,3 +1,7 @@
+const getRandomEl = (arr) => (
+	arr[Math.floor(Math.random() * arr.length)]
+);
+
 export const flipPlayer = (player) => {
 	return player === 'o' ? 'x' : 'o';
 }
@@ -96,6 +100,9 @@ export const getWinningCombinations = () => {
 export const calcStepsFromWin = (combinations, checkboard, player) => {
 	let moves = combinations.map((combination) => {
 		let steps = combination.reduce((acc, field) => {
+			//That move's already taken
+			if(checkboard[field] === flipPlayer(player))
+				return 9999;
 			if(checkboard[field] === player) acc--;
 			return acc;
 		}, 3);
@@ -105,41 +112,33 @@ export const calcStepsFromWin = (combinations, checkboard, player) => {
 	return moves;
 }
 
-// export const getNeighbours = (field) => {
-// 	let neighbours = [];
-// 	//right neighbour
-// 	if(move % 3 !== 0) neighbours.push(move + 1)
-// 	//left neighbour
-// 	if(move % 3 !== 2) neighbours.push(move - 1)
-// 	//top neighbour
-// 	if(move - 3 >= 0) neighbours.push(move - 3)
-// 	//bottom neighbour
-// 	if(move + 3 < 9) neighbours.push(move + 3)
-// 	return neighbours;
-// }
+export const getBestMoves = (calcedCombinations) => {
+	const sortedCombinations = calcedCombinations.sort((a, b) => {
+		return a.steps - b.steps;
+	})
 
-// export const getOwnNeighbours = (move, checkboard, player) => {
-// 	const neighbours = getNeighbours(move);
-// 	return neighbours.reduce((acc, neighbour) => {
-// 		if(acc === true) return true;
-// 		if(checkboard[neighbour] === player) return true;
-// 	}, false)
-// 	return false;
-// }
+	return sortedCombinations.filter((comb) => (
+		comb.steps <= sortedCombinations[0].steps
+	));
+}
 
-// export const scoreMoves = (availableMoves, checkboard, player) => {
-// 	return availableMoves.map((move) => {
-// 		if(getOwnNeighbours(move, checkboard, player)) console.log(move);
-// 	});
-// }
+export const getPossibleFieldsFromMove = (move, checkboard) => {
+	return move.combination.filter((field) => (
+		!isFieldFilled(checkboard[field])
+		)
+	);
+}
+
 
 export const playComputer = (dispatch, getState) => {
 	const { checkboard, status } = getState();
 	const availableMoves = getAvailableMoves(checkboard);
 	const winningCombinations = getWinningCombinations();
-	console.log(calcStepsFromWin(winningCombinations, checkboard, status.currentPlayer))
-	// const scoredMoves = scoreMoves(
-	// 	availableMoves, checkboard, status.currentPlayer
-	// );
-	//console.log(scoredMoves)
+	const calcedCombinations = calcStepsFromWin(winningCombinations, checkboard, status.currentPlayer);
+	const bestMoves = getBestMoves(calcedCombinations);
+	const randomBestMove = getRandomEl(bestMoves);
+	const possibleFields = getPossibleFieldsFromMove(randomBestMove, checkboard);
+	const fieldToConquer = getRandomEl(possibleFields);
+	console.log(randomBestMove, fieldToConquer);
+	return fieldToConquer;
 }
