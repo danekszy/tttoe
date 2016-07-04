@@ -1,14 +1,4 @@
-const defaultState = [
-	'',
-	'',
-	'',
-	'',
-	'',
-	'',
-	'',
-	'',
-	''
-]
+const defaultState = Array.apply('', Array(9));
 
 function checkboard(state = defaultState, action) {
 	console.log(action);

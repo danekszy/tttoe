@@ -1,109 +1,4 @@
-const helpers = {
-	flipPlayer(player) {
-		return player === 'o' ? 'x' : 'o';
-	},
-
-	isFieldFilled(prevValue) {
-		return typeof prevValue !== 'undefined' && prevValue !== '';
-	},
-
-	shouldComputerPlay(nextPlayer, players) {
-		return players[nextPlayer] === 'COMPUTER';
-	},
-
-	isGameOver(checkboard, isFieldFilled) {
-		return checkboard.every(isFieldFilled);
-	},
-
-	checkHorizontalResult(checkboard) {
-		for (let i = 0; i < 3; i++) {
-			let row = checkboard.slice(i * 3, i * 3 + 3);
-			if(
-				row[0] === row[1] &&
-				row[0] === row[2] &&
-				row[0] !== ''
-			)
-				return row[0];
-		}
-		return false;
-	},
-
-	checkVerticalResult(checkboard) {
-		for (let i = 0; i < 3; i++) {
-			let result;
-
-			if(
-				checkboard[i] === checkboard[i+3] &&
-				checkboard[i] === checkboard[i+6]
-			)
-				result = checkboard[i];
-
-			if(checkboard[i] == '')
-				result = false;
-
-			if(result)
-				return result;
-		}
-		return false;
-	},
-
-	checkDiagonalResult(checkboard) {
-		if(checkboard[4] == '') return false;
-
-		if((
-				checkboard[0] === checkboard[4] &&
-				checkboard[0] === checkboard[8]
-			) || (
-				checkboard[2] === checkboard[4] &&
-				checkboard[2] === checkboard[6]
-			)
-		)
-			return checkboard[4];
-
-		return false;
-	},
-
-	checkResult(checkboard, helpers) {
-		return helpers.checkHorizontalResult(checkboard) ||
-		helpers.checkVerticalResult(checkboard) ||
-		helpers.checkDiagonalResult(checkboard);
-	},
-
-	finishMove(helpers) {
-		const {
-			isGameOver,
-			isFieldFilled,
-			flipPlayer,
-			shouldComputerPlay,
-			playComputer,
-			checkResult
-		} = helpers;
-
-		return (dispatch, getState) => {
-			const state = getState();
-			const { players, checkboard, status } = state;
-
-			const winner = checkResult(checkboard, helpers);
-
-			if(winner) {
-				dispatch(updateWinner(winner));
-				dispatch(updateGameState('won'));
-			}
-			else if(isGameOver(checkboard, isFieldFilled))
-				dispatch(updateGameState('tied'));
-
-			const newPlayer = flipPlayer(status.currentPlayer);
-
-			dispatch(switchPlayer(newPlayer));
-			if(shouldComputerPlay(newPlayer, players))
-				playComputer(dispatch, getState);
-		}
-	},
-
-	playComputer(dispatch, getState) {
-		console.log('computer logic here');
-	}
-}
+import * as helpers from '../helpers';
 
 export function init() {
 	return {
@@ -118,7 +13,34 @@ export function reset() {
 };
 
 export function finishMove() {
-	return helpers.finishMove(helpers);
+const {
+	isGameOver,
+	isFieldFilled,
+	flipPlayer,
+	shouldComputerPlay,
+	playComputer,
+	checkResult
+} = helpers;
+
+	return (dispatch, getState) => {
+		const state = getState();
+		const { players, checkboard, status } = state;
+
+		const winner = checkResult(checkboard, helpers);
+
+		if(winner) {
+			dispatch(updateWinner(winner));
+			return dispatch(updateGameState('won'));
+		}
+		else if(isGameOver(checkboard, isFieldFilled))
+			return dispatch(updateGameState('tied'));
+
+		const newPlayer = flipPlayer(status.currentPlayer);
+		dispatch(switchPlayer(newPlayer));
+
+		if(shouldComputerPlay(newPlayer, players))
+			playComputer(dispatch, getState);
+	}
 };
 
 function switchPlayer(newPlayer) {
