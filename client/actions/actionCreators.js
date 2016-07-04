@@ -23,7 +23,7 @@ const helpers = {
 				row[0] === row[2] &&
 				row[0] !== ''
 			)
-				return true;
+				return row[0];
 		}
 		return false;
 	},
@@ -36,7 +36,7 @@ const helpers = {
 				checkboard[i] === checkboard[i+3] &&
 				checkboard[i] === checkboard[i+6]
 			)
-				result = true;
+				result = checkboard[i];
 
 			if(checkboard[i] == '')
 				result = false;
@@ -58,7 +58,7 @@ const helpers = {
 				checkboard[2] === checkboard[6]
 			)
 		)
-			return true;
+			return checkboard[4];
 
 		return false;
 	},
@@ -83,8 +83,14 @@ const helpers = {
 			const state = getState();
 			const { players, checkboard, status } = state;
 
-			if(checkResult(checkboard, helpers)) alert('win');
-			else if(isGameOver(checkboard, isFieldFilled)) alert('tie');
+			const winner = checkResult(checkboard, helpers);
+
+			if(winner) {
+				dispatch(updateWinner(winner));
+				dispatch(updateGameState('won'));
+			}
+			else if(isGameOver(checkboard, isFieldFilled))
+				dispatch(updateGameState('tied'));
 
 			const newPlayer = flipPlayer(status.currentPlayer);
 
@@ -115,7 +121,7 @@ export function finishMove() {
 	return helpers.finishMove(helpers);
 };
 
-export function switchPlayer(newPlayer) {
+function switchPlayer(newPlayer) {
 	return {
 		type: 'SWITCH_PLAYER',
 		newPlayer
@@ -135,16 +141,30 @@ export function conquer(index, player) {
   }
 };
 
-export function conquerImpossible() {
+function conquerImpossible() {
 	return {
 		type: 'CONQUER_FIELD_IMPOSSIBLE'
 	}
 };
 
-export function conquerPossible(index, player) {
+function conquerPossible(index, player) {
 	return {
 		type: 'CONQUER_FIELD_POSSIBLE',
 		index,
 		player
+	}
+};
+
+function updateWinner(player) {
+	return {
+		type: 'UPDATE_WINNER',
+		player
+	}
+};
+
+function updateGameState(gameState) {
+	return {
+		type: 'UPDATE_GAMESTATE',
+		gameState
 	}
 };

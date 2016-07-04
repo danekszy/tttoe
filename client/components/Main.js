@@ -5,7 +5,10 @@ import ResultDialog from './ResultDialog';
 
 const Main = (props) => (
 	<div className="game-ui">
-		<ResultDialog status={status}/>
+		<ResultDialog
+			status={props.status}
+			reset={props.reset}
+		/>
 		<Checkboard {...props}/>
 	</div>
 )
