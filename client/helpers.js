@@ -35,12 +35,6 @@ export const checkResult = (checkboard) => {
 	}, false);
 }
 
-export const getAvailableMoves = (checkboard) => {
-	return checkboard.reduce((acc, item, i) => {
-		if(!isFieldFilled(item)) return [...acc, i];
-		return acc;
-	}, []);
-}
 
 export const getWinningCombinations = () => {
 	const horizontal = [
