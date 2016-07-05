@@ -13,6 +13,7 @@ function status(state = defaultState, action) {
 			}
 			break;
 
+		case 'INIT_GAME':
 		case 'RESET_GAME':
 			return defaultState;
 			break;

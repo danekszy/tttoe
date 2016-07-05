@@ -1,5 +1,27 @@
 import * as helpers from '../helpers';
 
+export function init() {
+const {
+	shouldComputerPlay,
+	playComputer,
+} = helpers;
+
+	return (dispatch, getState) => {
+		const state = getState();
+
+		const { players, status } = state;
+		const { currentPlayer } = status;
+
+		if(shouldComputerPlay(currentPlayer, players)) {
+			let field = playComputer(dispatch, getState);
+			const conquerAction = (dispatch) => {
+				dispatch(conquer(field, currentPlayer, true))
+			};
+			setTimeout(conquerAction.bind(null, dispatch), 500);
+		}
+	}
+};
+
 export function reset() {
 	return {
 		type: 'RESET_GAME'

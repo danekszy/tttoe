@@ -20,8 +20,12 @@ const CheckboardRow = ({ row, rowItems, onItemClick }) => (
 );
 
 class Checkboard extends React.Component {
-	constructor() {
-		super();
+	constructor(props) {
+		super(props);
+	}
+
+	componentDidMount() {
+		this.props.init();
 	}
 
 	listToGrid(items) {
