@@ -18,58 +18,21 @@ export const isGameOver = (checkboard, isFieldFilled) => {
 	return checkboard.every(isFieldFilled);
 }
 
-export const checkHorizontalResult = (checkboard) => {
-	for (let i = 0; i < 3; i++) {
-		let row = checkboard.slice(i * 3, i * 3 + 3);
-		if(
-			row[0] === row[1] &&
-			row[0] === row[2] &&
-			row[0] !== ''
-		)
-			return row[0];
-	}
-	return false;
-}
-
-export const checkVerticalResult = (checkboard) => {
-	for (let i = 0; i < 3; i++) {
-		let result;
-
-		if(
-			checkboard[i] === checkboard[i+3] &&
-			checkboard[i] === checkboard[i+6]
-		)
-			result = checkboard[i];
-
-		if(checkboard[i] === '')
-			result = false;
-
-		if(result)
-			return result;
-	}
-	return false;
-}
-
-export const checkDiagonalResult = (checkboard) => {
-	if(checkboard[4] === '') return false;
-
-	if((
-			checkboard[0] === checkboard[4] &&
-			checkboard[0] === checkboard[8]
-		) || (
-			checkboard[2] === checkboard[4] &&
-			checkboard[2] === checkboard[6]
-		)
-	)
-		return checkboard[4];
-
-	return false;
-}
-
 export const checkResult = (checkboard) => {
-	return checkHorizontalResult(checkboard) ||
-	checkVerticalResult(checkboard) ||
-	checkDiagonalResult(checkboard);
+	const combinations = getWinningCombinations();
+
+	const isValue = (value) => (field) => (
+		checkboard[field] === value
+	);
+
+	const isX = isValue('x');
+	const isO = isValue('o');
+
+	return combinations.reduce((acc, comb) => {
+		if(acc) return acc;
+		if(comb.every((isX))) return 'x';
+		if(comb.every((isO))) return 'o';
+	}, false);
 }
 
 export const getAvailableMoves = (checkboard) => {
