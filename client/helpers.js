@@ -119,6 +119,5 @@ export const playComputer = (dispatch, getState) => {
 	const randomBestMove = getRandomEl(bestMoves);
 	const possibleFields = getPossibleFieldsFromMove(randomBestMove, checkboard);
 	const fieldToConquer = getRandomEl(possibleFields);
-	console.log(randomBestMove, possibleFields, fieldToConquer);
 	return fieldToConquer;
 }
