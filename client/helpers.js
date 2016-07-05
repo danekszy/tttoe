@@ -54,48 +54,71 @@ export const getWinningCombinations = () => {
 	return [...horizontal, ...vertical, ...diagonal];
 }
 
-export const calcStepsFromWin = (combinations, checkboard, player) => {
-	let moves = combinations.map((combination) => {
-		let steps = combination.reduce((acc, field) => {
-			//That move's already taken
+export const calcStepsNeeded = (combinations, checkboard, player) => {
+	const calcSteps = (player) => (combination) => {
+		return combination.reduce((acc, field) => {
+			if(acc === null)
+				return acc;
 			if(checkboard[field] === flipPlayer(player))
-				return 9999;
-			if(checkboard[field] === player) acc--;
+				return null;
+			if(checkboard[field] === player)
+				acc--;
 			return acc;
 		}, 3);
+	};
+	const stepsToWin = calcSteps(player);
+	const stepsToLose = calcSteps(flipPlayer(player));
 
-		return { combination, steps };
-	})
-	return moves;
+	return combinations.map((combination) => ({
+	 combination,
+	 stepsToWin: stepsToWin(combination),
+	 stepsToLose: stepsToLose(combination)
+	}));
 }
 
-export const getBestMoves = (calcedCombinations) => {
-	const sortedCombinations = calcedCombinations.sort((a, b) => {
-		return a.steps - b.steps;
-	})
+export const getMovesScore = (calcedCombinations) => {
+	return calcedCombinations.map((comb) => {
+		let score = comb.stepsToLose !== null ?
+			//Double stepsToLose for more defensive approach
+			comb.stepsToLose * 2 :
+			//If can't lose, return higher score
+			6;
+		score+=comb.stepsToWin;
 
-	return sortedCombinations.filter((comb) => (
-		comb.steps <= sortedCombinations[0].steps
+		return {
+			...comb,
+			score
+		};
+	})
+}
+
+export const getBestMoves = (scoredMoves) => {
+	const sortedMoves = scoredMoves.sort((a, b) => (
+		a.score - b.score
+	));
+
+	return sortedMoves.filter((comb) => (
+		comb.score <= sortedMoves[0].score
 	));
 }
 
-export const getPossibleFieldsFromMove = (move, checkboard) => {
-	return move.combination.filter((field) => (
+export const getPossibleFieldsFromMove = (move, checkboard) => (
+	move.combination.filter((field) => (
 		!isFieldFilled(checkboard[field])
 		)
-	);
-}
+	)
+)
 
 
 export const playComputer = (dispatch, getState) => {
 	const { checkboard, status } = getState();
-	const availableMoves = getAvailableMoves(checkboard);
 	const winningCombinations = getWinningCombinations();
-	const calcedCombinations = calcStepsFromWin(winningCombinations, checkboard, status.currentPlayer);
-	const bestMoves = getBestMoves(calcedCombinations);
+	const calcedCombinations = calcStepsNeeded(winningCombinations, checkboard, status.currentPlayer);
+	const scoredMoves = getMovesScore(calcedCombinations);
+	const bestMoves = getBestMoves(scoredMoves);
 	const randomBestMove = getRandomEl(bestMoves);
 	const possibleFields = getPossibleFieldsFromMove(randomBestMove, checkboard);
 	const fieldToConquer = getRandomEl(possibleFields);
-	console.log(randomBestMove, fieldToConquer);
+	console.log(randomBestMove, possibleFields, fieldToConquer);
 	return fieldToConquer;
 }
