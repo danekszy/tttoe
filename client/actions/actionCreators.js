@@ -1,11 +1,5 @@
 import * as helpers from '../helpers';
 
-export function init() {
-	return {
-		type: 'INIT_GAME'
-	}
-};
-
 export function reset() {
 	return {
 		type: 'RESET_GAME'
