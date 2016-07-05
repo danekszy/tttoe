@@ -16,3 +16,6 @@ to launch the dev server.
 #Planning
 Project planning notes are available here:
 [Issue #1](https://github.com/danekszy/tttoe/issues/1)
+
+####Protip
+Change circle player to `COMPUTER` in `client/reducers/index.js`
