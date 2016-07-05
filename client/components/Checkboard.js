@@ -53,4 +53,12 @@ class Checkboard extends React.Component {
 	}
 }
 
+Checkboard.propTypes = {
+	status: React.PropTypes.shape({
+		currentPlayer: React.PropTypes.oneOf(['x', 'o']).isRequired
+	}).isRequired,
+	conquer: React.PropTypes.func.isRequired,
+	checkboard: React.PropTypes.arrayOf(React.PropTypes.string)
+};
+
 export default Checkboard;

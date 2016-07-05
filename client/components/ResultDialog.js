@@ -36,4 +36,12 @@ const ResultDialog = ({status, reset}) => (
 	</div>
 )
 
+ResultDialog.propTypes = {
+	status: React.PropTypes.shape({
+		gameState: React.PropTypes.string.isRequired,
+		winner: React.PropTypes.string
+	}).isRequired,
+	reset: React.PropTypes.func.isRequired
+};
+
 export default ResultDialog;
