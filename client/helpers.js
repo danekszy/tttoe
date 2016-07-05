@@ -79,11 +79,19 @@ export const calcStepsNeeded = (combinations, checkboard, player) => {
 export const getMovesScore = (calcedCombinations) => {
 	return calcedCombinations.map((comb) => {
 		let score = comb.stepsToLose !== null ?
-			//Double stepsToLose for more defensive approach
-			comb.stepsToLose * 2 :
-			//If can't lose, return higher score
-			6;
-		score+=comb.stepsToWin;
+			//Bump stepsToLose for more defensive approach
+			comb.stepsToLose * 1.5 :
+			//If can't lose, return worse score...
+			//Uses 4 instead of 4.5 so that fear of loss
+			//won't block winning move
+			4;
+
+		score += comb.stepsToWin !== null ?
+			comb.stepsToWin :
+			//If can't win, return worst score
+			//3 = empty combination
+			//4 -> to discourage dead-end moves
+			4;
 
 		return {
 			...comb,
