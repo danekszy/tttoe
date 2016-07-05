@@ -1,3 +1,12 @@
+const compose = (...funcs) => {
+	let data;
+	funcs.forEach((step) => {
+		if(typeof step == 'function') data = step(data);
+		else data = step;
+	});
+	return data;
+}
+
 const getRandomEl = (arr) => (
 	arr[Math.floor(Math.random() * arr.length)]
 );
@@ -127,9 +136,12 @@ export const getPossibleFieldsFromMove =
 export const playComputer = (dispatch, getState) => {
 	const { checkboard, status } = getState();
 	const calcedCombinations = calcStepsNeededWithCombinations(checkboard, status.currentPlayer);
-	const scoredMoves = getMovesScore(calcedCombinations);
-	const bestMoves = getBestMoves(scoredMoves);
-	const randomBestMove = getRandomEl(bestMoves);
+	const randomBestMove = compose(
+		calcedCombinations,
+		getMovesScore,
+		getBestMoves,
+		getRandomEl
+	);
 	const possibleFields = getPossibleFieldsFromMove(isFieldFilled)(randomBestMove, checkboard);
 	const fieldToConquer = getRandomEl(possibleFields);
 	return fieldToConquer;
