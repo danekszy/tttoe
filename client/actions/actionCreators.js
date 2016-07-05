@@ -35,14 +35,14 @@ const {
 	flipPlayer,
 	shouldComputerPlay,
 	playComputer,
-	checkResult
+	checkResultWithCombinations
 } = helpers;
 
 	return (dispatch, getState) => {
 		const state = getState();
 		const { players, checkboard, status } = state;
 
-		const winner = checkResult(checkboard, helpers);
+		const winner = checkResultWithCombinations(checkboard);
 
 		if(winner) {
 			dispatch(updateWinner(winner));
